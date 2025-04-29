@@ -1,7 +1,24 @@
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+
+# Django
 *.sqlite3
-*.xlsx
+*.log
+*.pot
+*.pyc
+
+# IDE
 .idea/
-.venv/
+.vscode/
+
+# Env
 .env
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Excel
+*.xlsx
