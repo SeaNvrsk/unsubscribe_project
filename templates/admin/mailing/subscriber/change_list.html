@@ -1,0 +1,12 @@
+{% extends "admin/change_list.html" %}
+
+{% block content_title %}
+<h1 style="text-align: center;">Suscriptores</h1>
+<div style="text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 16px;">
+  Total: <span style="color: white;">{{ count_all }}</span>
+  &nbsp;&nbsp;&nbsp;
+  Activos: <span style="color: #4caf50;">{{ count_active }}</span>
+  &nbsp;&nbsp;&nbsp;
+  Darse de baja: <span style="color: #f44336;">{{ count_unsubscribed }}</span>
+</div>
+{% endblock %}

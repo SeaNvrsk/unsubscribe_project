@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Administrar Suscriptores</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: sans-serif;
+        }
+        .card {
+            background: white;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #2a64d3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        input[type="file"] {
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Administrar Suscriptores</h1>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.file }}
+            <button type="submit">Subir</button>
+        </form>
+
+        <form method="get" action="{% url 'export_subscribers' %}">
+            <button type="submit">Exportar suscriptores</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{% load i18n %}
+
+<div class="actions">
+  <label for="action">{% trans "Acción:" %}</label>
+  <select name="action" required>
+    <option value="" selected>{% trans "--------- Acción ---------" %}</option>
+    {% for action in actions %}
+      <option value="{{ action.0 }}" {% if action.0 == action_selected %}selected{% endif %}>
+        {{ action.1 }}
+      </option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="button" title="{% trans "Ejecutar acción seleccionada" %}">
+    {% trans "Ejecutar" %}
+  </button>
+</div>
