@@ -73,7 +73,7 @@ def upload_subscribers(request):
             if email:
                 Subscriber.objects.get_or_create(
                     email=email,
-                    defaults={'unsubscribe_token': uuid.uuid4()}d
+                    defaults={'unsubscribe_token': uuid.uuid4()})
     return redirect('index')
 
 def export_subscribers(request):
