@@ -3,51 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Administrar Suscriptores</title>
-    <style>
-        body {
-            background-color: #f5f5f5;
-            font-family: sans-serif;
-        }
-        .card {
-            background: white;
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        button {
-            background: #2a64d3;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-        input[type="file"] {
-            margin-top: 10px;
-            display: block;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="card">
-        <h1>Administrar Suscriptores</h1>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+<div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-xl">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Administrar Suscriptores</h1>
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.file }}
-            <button type="submit">Subir</button>
-        </form>
+    <form method="post" enctype="multipart/form-data" class="mb-6">
+        {% csrf_token %}
+        {{ form.file }}
+        <button type="submit" class="ml-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            Subir
+        </button>
+    </form>
 
-        <form method="get" action="{% url 'export_subscribers' %}">
-            <button type="submit">Exportar suscriptores</button>
-        </form>
-    </div>
+    <form method="get" action="{% url 'export_subscribers' %}">
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            Exportar suscriptores
+        </button>
+    </form>
+</div>
 </body>
 </html>

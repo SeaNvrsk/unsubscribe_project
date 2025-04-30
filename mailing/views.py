@@ -62,7 +62,8 @@ def export_csv(request):
     return response
 
 def index(request):
-    return render(request, 'index.html')
+    form = UploadFileForm()
+    return render(request, 'index.html', {'form': form})
 
 def upload_subscribers(request):
     if request.method == 'POST' and request.FILES['file']:
