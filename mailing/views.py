@@ -1,29 +1,74 @@
-from django.shortcuts import render
-from .models import Subscriber
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .forms import UploadFileForm
-from .models import Subscriber
 import openpyxl
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 import csv
-from .models import Subscriber
 import uuid
+import logging
+from django.shortcuts import render
+from django.utils.timezone import now
+from django.core.mail import send_mail
+from .models import Subscriber
+from django.http import HttpResponse
 
+logger = logging.getLogger('unsubscribe')           # для действий пользователя
+error_logger = logging.getLogger('django')          # для ошибок (уходит на email)
+
+from django.shortcuts import render
+from django.utils.timezone import now
+from django.core.mail import send_mail
+import uuid
+import logging
+from .models import Subscriber
+
+logger = logging.getLogger('unsubscribe')           # для действий пользователя
+error_logger = logging.getLogger('django')          # для ошибок (в т.ч. отправка на почту)
 
 def unsubscribe_view(request):
     token = request.GET.get("token")
+
     if token:
         try:
-            subscriber = Subscriber.objects.get(unsubscribe_token=token)
-            subscriber.is_unsubscribed = True
-            subscriber.save()
-            return render(request, "mailing/success.html", {"email": subscriber.email})
-        except Subscriber.DoesNotExist:
+            uuid_obj = uuid.UUID(token)
+        except ValueError:
+            logger.warning(f"Token inválido recibido: {token} | IP: {request.META.get('REMOTE_ADDR')}")
             return render(request, "mailing/invalid.html")
-    else:
-        return render(request, "mailing/invalid.html")
+
+        try:
+            subscriber = Subscriber.objects.get(unsubscribe_token=uuid_obj)
+            if not subscriber.is_unsubscribed:
+                subscriber.is_unsubscribed = True
+                subscriber.save()
+
+                logger.info(f"El usuario {subscriber.email} se dio de baja correctamente. IP: {request.META.get('REMOTE_ADDR')}")
+
+                try:
+                    logger.info("📧 Enviando notificación de baja por email...")
+                    send_mail(
+                        subject="Usuario se dio de baja",
+                        message=f"El usuario {subscriber.email} se dio de baja del boletín el {now().strftime('%d/%m/%Y %H:%M')}.",
+                        from_email="notificaciones@recovia.solutions",
+                        recipient_list=["reclamaciones@recovia.mx"],
+                        fail_silently=False,
+                    )
+                    logger.info("📧 Email de notificación enviado exitosamente.")
+                except Exception as e:
+                    error_logger.error(f"❌ Fallo al enviar email de baja: {e}", exc_info=True)
+
+            return render(request, "mailing/success.html", context={"email": subscriber.email})
+
+        except Subscriber.DoesNotExist:
+            logger.warning(f"Token válido pero no encontrado: {token} | IP: {request.META.get('REMOTE_ADDR')}")
+            return render(request, "mailing/invalid.html")
+
+        except Exception as e:
+            error_logger.error(f"❌ Error inesperado en la vista de baja: {str(e)}", exc_info=True)
+            return render(request, "mailing/error.html")
+
+    logger.warning(f"Solicitud sin token recibida. IP: {request.META.get('REMOTE_ADDR')}")
+    return render(request, "mailing/invalid.html")
+
 
 @login_required
 def upload_excel(request):
@@ -91,3 +136,6 @@ def export_subscribers(request):
     response['Content-Disposition'] = 'attachment; filename=subscribers.xlsx'
     wb.save(response)
     return response
+
+def test_error_logging(request):
+    raise Exception("🧨 Искусственная ошибка для автоматического теста")

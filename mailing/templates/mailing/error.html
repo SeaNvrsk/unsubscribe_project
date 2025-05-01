@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Error al cancelar suscripción</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        img.logo {
+            width: 180px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #d32f2f;
+            font-size: 24px;
+        }
+
+        p {
+            font-size: 17px;
+            margin: 10px 0 20px;
+        }
+
+        .button {
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 25px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .button.red {
+            background-color: #f44336;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #f1f1f1;
+            }
+
+            .button {
+                background-color: #81c784;
+            }
+
+            .button.red {
+                background-color: #ef5350;
+            }
+
+            footer {
+                color: #777;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img src="/static/recovia-logo.png" alt="Recovia" class="logo">
+
+    <h1>Ocurrió un error</h1>
+    <p>No pudimos procesar tu solicitud en este momento.</p>
+    <p>Si el problema persiste, contáctanos y con gusto te ayudaremos.</p>
+
+    <a href="tel:+525523462628" class="button">Llamar al soporte</a>
+    <a href="mailto:reclamaciones@recovia.mx" class="button red">Escribir al correo</a>
+
+    <footer>
+        Recovia, S.A. de C.V. &copy; 2025
+    </footer>
+</div>
+</body>
+</html>
