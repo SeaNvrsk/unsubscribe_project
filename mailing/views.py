@@ -156,3 +156,20 @@ def export_subscribers(request):
     )
     response['Content-Disposition'] = 'attachment; filename=dados_de_baja.xlsx'
     return response
+
+
+@login_required
+def export_all_subscribers(request):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.append(['Email', 'Dado de baja', 'Token'])
+
+    for s in Subscriber.objects.all():
+        ws.append([s.email, 'Sí' if s.is_unsubscribed else 'No', str(s.unsubscribe_token)])
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=subscribers_all.xlsx'
+    wb.save(response)
+    return response
