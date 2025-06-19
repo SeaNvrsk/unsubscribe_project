@@ -9,7 +9,7 @@
 <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-xl">
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Administrar Suscriptores</h1>
 
-    <form method="post" enctype="multipart/form-data" class="mb-6">
+    <form method="post" enctype="multipart/form-data" class="mb-6" onsubmit="mostrarCargando()">
         {% csrf_token %}
         {{ form.file }}
         <button type="submit" class="ml-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
@@ -17,11 +17,27 @@
         </button>
     </form>
 
+    <div id="cargando" class="hidden text-blue-600 font-semibold mt-2 text-sm">
+        ⏳ Cargando archivo, por favor espera...
+    </div>
+
     <form method="get" action="{% url 'export_subscribers' %}">
         <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            Exportar suscriptores
+            Exportar solo dados de baja
         </button>
     </form>
+
+    <div class="mt-6 text-center">
+        <a href="/admin/" class="text-blue-600 hover:underline">
+            Ir al panel de administración →
+        </a>
+    </div>
 </div>
+
+<script>
+function mostrarCargando() {
+    document.getElementById("cargando").classList.remove("hidden");
+}
+</script>
 </body>
 </html>

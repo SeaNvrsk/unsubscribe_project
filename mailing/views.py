@@ -11,6 +11,10 @@ from django.core.mail import send_mail
 import uuid
 import logging
 from .models import Subscriber
+from io import BytesIO
+from django.http import HttpResponse
+import openpyxl
+from .models import Subscriber
 
 logger = logging.getLogger('unsubscribe')           # для действий пользователя
 error_logger = logging.getLogger('django')          # для ошибок (в т.ч. отправка на почту)
@@ -126,20 +130,29 @@ def upload_subscribers(request):
                     defaults={'unsubscribe_token': uuid.uuid4()})
     return redirect('index')
 
+
 def export_subscribers(request):
     wb = openpyxl.Workbook()
     ws = wb.active
-    ws.append(['Email', 'Dado de baja', 'Token'])
+    ws.title = "Dado de baja"
+    ws.append(['Email', 'Fecha de baja', 'Token'])
 
-    for s in Subscriber.objects.all():
-        ws.append([s.email, 'Sí' if s.is_unsubscribed else 'No', str(s.unsubscribe_token)])
+    unsubscribed = Subscriber.objects.filter(is_unsubscribed=True)
+
+    for s in unsubscribed:
+        ws.append([
+            s.email,
+            s.created_at.strftime('%Y-%m-%d %H:%M'),
+            str(s.unsubscribe_token)
+        ])
+
+    buffer = BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
 
     response = HttpResponse(
+        buffer.getvalue(),
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    response['Content-Disposition'] = 'attachment; filename=subscribers.xlsx'
-    wb.save(response)
+    response['Content-Disposition'] = 'attachment; filename=dados_de_baja.xlsx'
     return response
-
-def test_error_logging(request):
-    raise Exception("🧨 Искусственная ошибка для автоматического теста")
