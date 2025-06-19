@@ -4,17 +4,7 @@ import openpyxl
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 import csv
-import uuid
-import logging
-from django.shortcuts import render
-from django.utils.timezone import now
-from django.core.mail import send_mail
-from .models import Subscriber
 from django.http import HttpResponse
-
-logger = logging.getLogger('unsubscribe')           # для действий пользователя
-error_logger = logging.getLogger('django')          # для ошибок (уходит на email)
-
 from django.shortcuts import render
 from django.utils.timezone import now
 from django.core.mail import send_mail
@@ -69,12 +59,16 @@ def unsubscribe_view(request):
     logger.warning(f"Solicitud sin token recibida. IP: {request.META.get('REMOTE_ADDR')}")
     return render(request, "mailing/invalid.html")
 
-
 @login_required
 def upload_excel(request):
+    logger.info(">>> upload_excel called")
     if request.method == "POST":
+        logger.info("POST request received")
+
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
+            logger.info("Form is valid")
+
             excel_file = request.FILES["file"]
             wb = openpyxl.load_workbook(excel_file)
             ws = wb.active
@@ -82,14 +76,21 @@ def upload_excel(request):
             count = 0
             for row in ws.iter_rows(min_row=2, values_only=True):
                 email = row[0]
+                logger.info(f"Read row: {row}")
                 if email:
                     _, created = Subscriber.objects.get_or_create(email=email)
                     if created:
                         count += 1
+
+            logger.info(f"Imported {count} new emails")
             return render(request, "mailing/upload_success.html", {"count": count})
+        else:
+            logger.warning("Form is invalid")
     else:
         form = UploadFileForm()
-    return render(request, "mailing/upload.html", {"form": form})
+        logger.info("GET request received")
+
+    return render(request, "index.html", {"form": form})
 
 
 @login_required
@@ -107,8 +108,11 @@ def export_csv(request):
     return response
 
 def index(request):
-    form = UploadFileForm()
-    return render(request, 'index.html', {'form': form})
+    if request.method == "POST":
+        print("File upload received")
+        print(request.FILES)  # Добавь временно
+        # дальше логика загрузки
+    return render(request, "index.html")
 
 def upload_subscribers(request):
     if request.method == 'POST' and request.FILES['file']:

@@ -9,29 +9,33 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-from decouple import config
-from pathlib import Path
 
+from pathlib import Path
 from dotenv import load_dotenv
 import os
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")  # или просто .env, если в той же папке
 
+SECRET_KEY = os.getenv("SECRET_KEY")
+print("SECRET_KEY LOADED:", SECRET_KEY)
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
-
-
+ALLOWED_HOSTS = [
+    'unsubscribe.recovia.solutions',
+    '54.89.139.116',
+    'localhost',
+    '127.0.0.1',
+]
+print(f"=== ALLOWED_HOSTS = {ALLOWED_HOSTS}")
 # Application definition
 
 INSTALLED_APPS = [
@@ -118,15 +122,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-import os
-
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -179,3 +181,7 @@ LOGGING = {
         },
     },
 }
+
+import logging
+logger = logging.getLogger('unsubscribe')
+logger.info(">>> Django settings loaded and logger is working")
